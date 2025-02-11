@@ -1,10 +1,26 @@
 const gameContainer = document.getElementById("games-container");
 
+const checkAuthenticated = async () => {
+    try {
+        const response = await fetch("/auth-status");
+        const data = await response.json();
+        return data.isAuthenticated;
+    } catch (err) {
+        console.error("Error checking auth status:", err);
+        return false;
+    }
+};
+
 //Event listener for delete button
 document.addEventListener("click", async (event) => {
     if (event.target.classList.contains("delete-btn")) {
-        const gameId = event.target.getAttribute("data-id");
+        const isAuthenticated = await checkAuthenticated();
+        if (!isAuthenticated) {
+            window.location.href = "/html/login.html";
+            return;
+        }
 
+        const gameId = event.target.getAttribute("data-id");
         try {
             const response = await fetch(`/deletegame/${gameId}`, { method: "DELETE" });
             if (!response.ok) throw new Error("Failed to delete game");
@@ -12,6 +28,17 @@ document.addEventListener("click", async (event) => {
             fetchGames(); // Refresh the game list
         } catch (err) {
             console.error("Error deleting game:", err);
+        }
+    }
+});
+
+//event listener for add button
+document.addEventListener("click", async (event) =>{
+    if(event.target.classList.contains("add-button")){
+        const isAuthenticated = await checkAuthenticated();
+        if (!isAuthenticated) {
+            window.location.href = "/html/login.html";
+            return;
         }
     }
 });
@@ -42,6 +69,19 @@ const fetchGames = async ()=>{
             <button class="delete-btn" data-id="${game._id}">Delete</button> <br> Developer: ${game.Developer} <br>`;
             gameContainer.appendChild(gameDiv);
         });
+
+        //Protect update button
+        document.addEventListener("click", async (event) => {
+            if (event.target.classList.contains("update-btn")) {
+                const isAuthenticated = await checkAuthenticated();
+                if (!isAuthenticated) {
+                    event.preventDefault(); // Prevent navigation
+                    window.location.href = "/html/login.html";
+                }
+            }
+        });
+
+        
     }catch(err){
         console.error("Error: ", err)
         userContainer.innerHTML = "<p style='color:red'>Failed to get games</p>";

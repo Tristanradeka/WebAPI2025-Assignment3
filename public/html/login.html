@@ -3,13 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login to site</title>
 </head>
 <body>
-    <h1>Login</h1>
-    <h3>Username</h3>
-    <input>
-    <h3>Password</h3>
-    <input><button>Login</button>
+    <h2>Login Page</h2>
+    <form action="/login" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" name="Username" id="Username" placeholder="Please enter username">
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" name="Password" id="Password">
+        <br>
+        <button type="submit">Submit</button>
+        <p style="color:red;"></p>
+    </form>
 </body>
 </html>
